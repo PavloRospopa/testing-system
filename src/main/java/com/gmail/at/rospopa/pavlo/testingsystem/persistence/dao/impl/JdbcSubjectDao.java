@@ -1,6 +1,7 @@
 package com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl;
 
 import com.gmail.at.rospopa.pavlo.testingsystem.entities.Subject;
+import com.gmail.at.rospopa.pavlo.testingsystem.persistence.ConnectionManager;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.SubjectDao;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.JdbcExecutant;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.mappers.SubjectMapper;
@@ -18,8 +19,8 @@ public class JdbcSubjectDao implements SubjectDao {
 
     private JdbcExecutant<Subject> jdbcExecutant;
 
-    public JdbcSubjectDao(Connection connection) {
-        jdbcExecutant = new JdbcExecutant<>(connection, new SubjectMapper());
+    public JdbcSubjectDao(ConnectionManager manager) {
+        jdbcExecutant = new JdbcExecutant<>(manager, new SubjectMapper());
     }
 
     @Override

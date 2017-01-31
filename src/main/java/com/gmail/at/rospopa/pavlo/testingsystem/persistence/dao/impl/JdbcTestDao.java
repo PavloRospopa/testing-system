@@ -1,7 +1,7 @@
 package com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl;
 
-import com.gmail.at.rospopa.pavlo.testingsystem.entities.Subject;
 import com.gmail.at.rospopa.pavlo.testingsystem.entities.Test;
+import com.gmail.at.rospopa.pavlo.testingsystem.persistence.ConnectionManager;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.TestDao;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.JdbcExecutant;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.mappers.TestMapper;
@@ -20,8 +20,8 @@ public class JdbcTestDao implements TestDao{
 
     private JdbcExecutant<Test> jdbcExecutant;
 
-    public JdbcTestDao(Connection connection) {
-        jdbcExecutant = new JdbcExecutant<>(connection, new TestMapper());
+    public JdbcTestDao(ConnectionManager manager) {
+        jdbcExecutant = new JdbcExecutant<>(manager, new TestMapper());
     }
 
     @Override
@@ -55,7 +55,7 @@ public class JdbcTestDao implements TestDao{
     }
 
     @Override
-    public List<Test> findTestsBySubject(Subject subject) {
-        return jdbcExecutant.executeQuery(FIND_BY_SUBJECT_SQL, subject.getId());
+    public List<Test> findTestsBySubject(Long id) {
+        return jdbcExecutant.executeQuery(FIND_BY_SUBJECT_SQL, id);
     }
 }

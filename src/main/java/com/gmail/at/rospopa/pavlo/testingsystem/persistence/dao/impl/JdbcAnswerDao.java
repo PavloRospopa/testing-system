@@ -2,6 +2,7 @@ package com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl;
 
 import com.gmail.at.rospopa.pavlo.testingsystem.entities.Answer;
 import com.gmail.at.rospopa.pavlo.testingsystem.entities.Question;
+import com.gmail.at.rospopa.pavlo.testingsystem.persistence.ConnectionManager;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.AnswerDao;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.JdbcExecutant;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.mappers.AnswerMapper;
@@ -22,8 +23,8 @@ public class JdbcAnswerDao implements AnswerDao {
 
     private JdbcExecutant<Answer> jdbcExecutant;
 
-    public JdbcAnswerDao(Connection connection) {
-        jdbcExecutant = new JdbcExecutant<>(connection, new AnswerMapper());
+    public JdbcAnswerDao(ConnectionManager manager) {
+        jdbcExecutant = new JdbcExecutant<>(manager, new AnswerMapper());
     }
 
     @Override
@@ -59,12 +60,12 @@ public class JdbcAnswerDao implements AnswerDao {
     }
 
     @Override
-    public List<Answer> findAnswersByQuestion(Question question) {
-        return jdbcExecutant.executeQuery(FIND_BY_QUESTION_SQL, question.getId());
+    public List<Answer> findAnswersByQuestion(Long id) {
+        return jdbcExecutant.executeQuery(FIND_BY_QUESTION_SQL, id);
     }
 
     @Override
-    public List<Answer> findRightAnswersByQuestion(Question question) {
-        return jdbcExecutant.executeQuery(FIND_SOME_ANS_IN_QUESTION_SQL, question.getId(), true);
+    public List<Answer> findRightAnswersByQuestion(Long id) {
+        return jdbcExecutant.executeQuery(FIND_SOME_ANS_IN_QUESTION_SQL, id, true);
     }
 }

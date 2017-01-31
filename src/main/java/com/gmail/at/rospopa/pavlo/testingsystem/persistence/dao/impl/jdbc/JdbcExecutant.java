@@ -1,6 +1,7 @@
 package com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc;
 
 import com.gmail.at.rospopa.pavlo.testingsystem.entities.Entity;
+import com.gmail.at.rospopa.pavlo.testingsystem.persistence.ConnectionManager;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.mappers.Mapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,16 +12,21 @@ import java.util.List;
 
 public class JdbcExecutant<T extends Entity> {
     private static final Logger LOGGER = LogManager.getLogger();
-    private Connection connection;
+    private ConnectionManager manager;
     private Mapper<T> mapper;
 
-    public JdbcExecutant(Connection connection, Mapper<T> mapper) {
-        this.connection = connection;
+    public JdbcExecutant(ConnectionManager manager, Mapper<T> mapper) {
+        this.manager = manager;
         this.mapper = mapper;
     }
 
     public List<T> executeQuery(String query, Object... params){
         List<T> entities = new ArrayList<>();
+        Connection connection = manager.getConnection();
+        if (connection == null) {
+            entities.add(null);
+            return entities;
+        }
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             setParams(stmt, params);
             ResultSet rs  = stmt.executeQuery();
@@ -31,6 +37,9 @@ public class JdbcExecutant<T extends Entity> {
         catch (SQLException e){
             LOGGER.warn("SQL exception during executing query to database", e);
         }
+        finally {
+            manager.close(connection);
+        }
         if (entities.isEmpty()){
             entities.add(null);
         }
@@ -39,6 +48,10 @@ public class JdbcExecutant<T extends Entity> {
 
     public int executeUpdate(String updateQuery, Object... params) {
         int updatedRows = 0;
+        Connection connection = manager.getConnection();
+        if (connection == null) {
+            return updatedRows;
+        }
         try (PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
             setParams(stmt, params);
             updatedRows = stmt.executeUpdate();
@@ -46,10 +59,17 @@ public class JdbcExecutant<T extends Entity> {
         catch (SQLException e){
             LOGGER.warn("SQL exception during processing update query to database", e);
         }
+        finally {
+            manager.close(connection);
+        }
         return updatedRows;
     }
 
     public Long executeInsert(String insertQuery, Object... params) {
+        Connection connection = manager.getConnection();
+        if (connection == null) {
+            return null;
+        }
         try (PreparedStatement stmt = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             setParams(stmt, params);
             stmt.executeUpdate();
@@ -61,11 +81,18 @@ public class JdbcExecutant<T extends Entity> {
         catch (SQLException e){
             LOGGER.warn("SQL exception during inserting data to database", e);
         }
+        finally {
+            manager.close(connection);
+        }
         return null;
     }
 
     public Long findRoleId(String query, String role){
         Long id = null;
+        Connection connection = manager.getConnection();
+        if (connection == null){
+            return null;
+        }
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             setParams(stmt, role);
             ResultSet rs  = stmt.executeQuery();
@@ -75,6 +102,9 @@ public class JdbcExecutant<T extends Entity> {
         }
         catch (SQLException e){
             LOGGER.warn("SQL exception during finding id for given role", e);
+        }
+        finally {
+            manager.close(connection);
         }
         return id;
     }

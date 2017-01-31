@@ -11,5 +11,5 @@ public interface Dao<PK, T extends Entity> {
     int delete(T entity);
     int delete(PK id);
     int update(T entity);
-    Long add(T entity);
+    PK add(T entity);
 }

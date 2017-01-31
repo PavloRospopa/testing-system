@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface QuestionDao extends Dao<Long, Question>{
 
-    List<Question> findQuestionsByTest(Test test);
+    List<Question> findQuestionsByTest(Long id);
 }

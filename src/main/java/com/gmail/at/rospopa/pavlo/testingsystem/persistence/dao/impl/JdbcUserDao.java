@@ -2,11 +2,11 @@ package com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl;
 
 import com.gmail.at.rospopa.pavlo.testingsystem.entities.Role;
 import com.gmail.at.rospopa.pavlo.testingsystem.entities.User;
+import com.gmail.at.rospopa.pavlo.testingsystem.persistence.ConnectionManager;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.UserDao;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.JdbcExecutant;
 import com.gmail.at.rospopa.pavlo.testingsystem.persistence.dao.impl.jdbc.mappers.UserMapper;
 
-import java.sql.*;
 import java.util.List;
 
 public class JdbcUserDao implements UserDao {
@@ -31,8 +31,8 @@ public class JdbcUserDao implements UserDao {
 
     private JdbcExecutant<User> jdbcExecutant;
 
-    public JdbcUserDao(Connection connection) {
-        jdbcExecutant = new JdbcExecutant<>(connection, new UserMapper());
+    public JdbcUserDao(ConnectionManager manager) {
+        jdbcExecutant = new JdbcExecutant<>(manager, new UserMapper());
     }
 
     @Override
